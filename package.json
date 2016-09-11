@@ -1,0 +1,30 @@
+{
+  "name": "co2monitor",
+  "version": "1.0.0",
+  "description": "Application for CO2 monitoring.",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.14.0",
+    "sqlite3": "^3.1.4",
+    "serialport": "^4.0.1",
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jekatigr/CO2monitor.git"
+  },
+  "keywords": [
+    "co2",
+    "arduino",
+    "mh-z19"
+  ],
+  "author": "jekatigr",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jekatigr/CO2monitor/issues"
+  },
+  "homepage": "https://github.com/jekatigr/CO2monitor#readme"
+}
