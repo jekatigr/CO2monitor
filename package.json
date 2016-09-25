@@ -4,14 +4,15 @@
   "description": "Application for CO2 monitoring.",
   "main": "app.js",
   "dependencies": {
+    "canvas-gauges": "^2.0.4",
     "express": "^4.14.0",
-    "sqlite3": "^3.1.4",
-    "serialport": "^4.0.1"
+    "serialport": "^4.0.1",
+    "sqlite3": "^3.1.4"
   },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-	"start": "node app.js"
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",

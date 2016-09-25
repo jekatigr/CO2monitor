@@ -19,7 +19,7 @@
 		padding: 5px;
 	}
 	img {
-		width: 600px;	
+		width: 600px;
 	}
 	table {
 		margin: 40px auto 0px auto;
@@ -34,7 +34,6 @@
 		padding: 50px;
 	}
 	td.img {
-		width: 66%;
 		text-align: center;
 	}
 	p.co2 {
@@ -50,7 +49,9 @@
 		<p id="chart">Loading...</p>
 		
 			<table>
-				<tr><td class="control">
+				<tr><td>
+					<canvas id="bar"></canvas>
+				</td><td class="control">
 					<form>
 						<select id="period">
 							<option value="10" selected>За 10 минут</option>
@@ -77,6 +78,7 @@
 		<script type="text/javascript" src="js/jqplot.dateAxisRenderer.min.js"></script>
 		<script type="text/javascript" src="js/jqplot.highlighter.min.js"></script>
 		<script type="text/javascript" src="js/jqplot.canvasOverlay.min.js"></script>
+		<script type="text/javascript" src="js/gauge.min.js"></script>
 		<script type="text/javascript" src="js/monitor.js"></script>
 	</body>
 </html>
