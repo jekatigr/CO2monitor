@@ -1,7 +1,6 @@
 $(document).ready(function(){
 	$.jqplot.config.enablePlugins = true;
 	
-	 // Add a new localization
     $.jsDate.regional['ux'] = {
         monthNames: ['Январь','Февраль','Март','Апрель','МАй','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
         monthNamesShort: ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'],
@@ -65,7 +64,7 @@ function loadChart(title, data) {
 			show: true,
 			objects: [
 				{horizontalLine: {
-					y: 800,
+					y: 900,
 					color: "#5bae21",
 					xOffset: 0,
 					shadow: false,
