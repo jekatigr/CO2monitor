@@ -1,7 +1,9 @@
 var sqlite3 = require('sqlite3').verbose();
 var SerialPort = require("serialport");
+var compression = require('compression');
 var express = require('express');
 var app = express();
+app.use(compression());
 
 var UPDATE_CO2_SENSOR_PER_MINUTE = 4;
 var data =[];
@@ -10,7 +12,7 @@ var db = new sqlite3.Database('data.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_C
 	if (err) {
 		console.log(err);
 	} else {
-		var limit = 12 * 60 * UPDATE_CO2_SENSOR_PER_MINUTE;
+		var limit = 24 * 60 * UPDATE_CO2_SENSOR_PER_MINUTE;
 		getValuesFromDB(limit, function(d) {
 			data = d;
 			runArduinoListener();
@@ -26,7 +28,8 @@ function getValuesFromDB(count, callback) {
 			console.log(err);
 		} else {
 			if (row != null) {
-				data.push([row.time, row.ppm]);
+				var timestamp = new Date(row.time).getTime();
+				data.push([timestamp, row.ppm]);
 			}
 		}
 	}, function(err, rowcount){
@@ -75,6 +78,9 @@ function saveNewDataEntry(entry) {
 	var stmt = db.prepare("INSERT INTO ppm_values VALUES (?, ?, ?)");
     stmt.run(null, entry[0], entry[1]);
     stmt.finalize(function () {
+		
+		var timestamp = new Date(entry[0]).getTime();
+				entry[0] = timestamp;
 		data.push(entry);
 	});
 }
@@ -99,7 +105,8 @@ function runWebserver() {
 			result.current = data_for_period[data_for_period.length - 1][1];
 			result.average = getAverage(data_for_period);
 		}
-		
+		res.set("Content-type", "application/json");
+		res.set("Access-Control-Allow-Origin", "*");
 		res.send(JSON.stringify(result));
 	});
 

@@ -1,15 +1,13 @@
 <!DOCTYPE html>
-<html lang="ux">
+<html>
  <head>
- 
-  <link rel="stylesheet" type="text/css" href="/css/jquery.jqplot.min.css" />
   <meta charset="utf-8">
   <title>UX Room Air Monitor</title>
-  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="icon" type="image/png" href="/favicon.png" />
   <style>
 	p#chart {
 		min-height: 300px;
-		width: 99%;
+		width: 100%;
 	}
 	select {
 		height: 40px;
@@ -43,41 +41,42 @@
 	p.label {
 		margin-top: 40px;
 	}
+	.highcharts-credits {
+		display: none;
+	}
   </style>
  </head> 
 	<body>
 		<p id="chart">Loading...</p>
 		
-			<table>
-				<tr><td>
-					<canvas id="bar"></canvas>
-				</td><td class="control">
-					<form>
-						<select id="period">
-							<option value="10" selected>За 10 минут</option>
-							<option value="60">За последний час</option>
-							<option value="240">За четыре часа</option>
-							<option value="720">За 12 часов</option>
-							<option value="1440">За сутки</option>
-						</select>
-					</form>
-					
-					<p class="label">Текущий уровень CO2:</p>
-					<p class="co2 current">Loading...</p>
-					
-					<p class="label">Средний уровень за период:</p>
-					<p class="co2 average">Loading...</p>
-					
-				</td><td class="img">
-					<img src="ppm.jpg"/>
-				</td></tr>
-			</table>
+		<table>
+			<tr><td>
+				<canvas id="bar"></canvas>
+			</td><td class="control">
+				<form>
+					<select id="period">
+						<option value="10" selected>За 10 минут</option>
+						<option value="60">За последний час</option>
+						<option value="240">За четыре часа</option>
+						<option value="720">За 12 часов</option>
+						<option value="1440">За сутки</option>
+					</select>
+				</form>
+				
+				<p class="label">Текущий уровень CO2:</p>
+				<p class="co2 current">Loading...</p>
+				
+				<p class="label">Средний уровень за период:</p>
+				<p class="co2 average">Loading...</p>
+				
+			</td><td class="img">
+				<img src="ppm.jpg"/>
+			</td></tr>
+		</table>
 		
 		<script type="text/javascript" src="js/jquery.min.js"></script>
-		<script type="text/javascript" src="js/jquery.jqplot.min.js"></script>
-		<script type="text/javascript" src="js/jqplot.dateAxisRenderer.min.js"></script>
-		<script type="text/javascript" src="js/jqplot.highlighter.min.js"></script>
-		<script type="text/javascript" src="js/jqplot.canvasOverlay.min.js"></script>
+		<script type="text/javascript" src="js/highcharts.js"></script>
+		<script type="text/javascript" src="js/highcharts.exporting.js"></script>
 		<script type="text/javascript" src="js/gauge.min.js"></script>
 		<script type="text/javascript" src="js/monitor.js"></script>
 	</body>

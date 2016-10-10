@@ -1,16 +1,28 @@
-$(document).ready(function(){
-	$.jqplot.config.enablePlugins = true;
-	
-    $.jsDate.regional['ux'] = {
-        monthNames: ['Январь','Февраль','Март','Апрель','МАй','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
-        monthNamesShort: ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'],
-        dayNames: ['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'],
-        dayNamesShort: ['Вс','Пон','Вт','Ср','Чт','Пт','Сб'],
-        formatString: '%d-%m-%Y %H:%M:%S'
-    };
-    $.jsDate.regional.getLocale();
+$(document).ready(function(){	
+	Highcharts.setOptions({
+        global: {
+            timezoneOffset: -3 * 60
+        },
+		lang: {
+			loading: 'Загрузка...',
+			months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+			weekdays: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
+			shortMonths: ['Янв', 'Фев', 'Март', 'Апр', 'Май', 'Июнь', 'Июль', 'Авг', 'Сент', 'Окт', 'Нояб', 'Дек'],
+			exportButtonTitle: "Экспорт",
+			printButtonTitle: "Печать",
+			rangeSelectorFrom: "С",
+			rangeSelectorTo: "По",
+			rangeSelectorZoom: "Период",
+			downloadPNG: 'Скачать PNG',
+			downloadJPEG: 'Скачать JPEG',
+			downloadPDF: 'Скачать PDF',
+			downloadSVG: 'Скачать SVG',
+			printChart: 'Напечатать график'
+		}
+    });
 	
 	initBar();
+	initChart();
 	update();
 	setInterval(update, 15000);
 	
@@ -22,7 +34,7 @@ function update() {
 	var periodText = $("#period :selected").text().toLowerCase();
 	$.getJSON( "data/"+period, function( resp ) {
 		updateData(resp.current, resp.average);
-		loadChart(periodText, resp.data);
+		updateChart(periodText, resp.data);
 		updateBar(resp.current);
 	});
 }
@@ -32,47 +44,69 @@ function updateData(current, average) {
 	$(".average").html(average + ' ppm');
 }
 
-function loadChart(title, data) {
-	$("#chart").html('');
-	var plot1 = $.jqplot('chart', [data], {
-		title:"UX Room Air Monitor ("+ title +")",
-		axes:{
-			xaxis:{
-				renderer:$.jqplot.DateAxisRenderer
+function initChart() {	
+	$('#chart').highcharts({
+		chart: {
+			zoomType: 'x', 
+			height: 400
+		},
+		title: {
+			text: 'UX Room Air Monitor'
+		},
+		subtitle: {
+			text: document.ontouchstart === undefined ?
+					'Выделите область графика для масштабирования' : 'Pinch the chart to zoom in'
+		},
+		xAxis: {
+			type: 'datetime'
+		},
+		yAxis: {
+			title: {
+				text: 'ppm'
 			}
 		},
-		series:[{
-			lineWidth:2, 
-			markerOptions:{
-				style:'circle', 
-				size: 2
-			},
-			color: '#000'
-		}],
-		highlighter: {
-			showMarker:true,
-			tooltipAxes: 'xy',
-			yvalues: 2,
-			tooltipLocation: 'n',
-			fadeTooltip: false,
-			formatString:'<table style="margin: 10px 15px 10px 8px;"> \
-				<tr><td align="center">%s</td></tr> \
-				<tr><td align="center">%d ppm</td></tr> \
-			</table>'
+		legend: {
+			enabled: false
 		},
-		canvasOverlay: {
-			show: true,
-			objects: [
-				{horizontalLine: {
-					y: 900,
-					color: "#5bae21",
-					xOffset: 0,
-					shadow: false,
-					showTooltip: false
-				}}
-			]
-		}
+		plotOptions: {
+			area: {
+				fillColor: {
+					linearGradient: {
+						x1: 0,
+						y1: 0,
+						x2: 0,
+						y2: 1
+					},
+					stops: [
+						[0, Highcharts.getOptions().colors[0]],
+						[1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+					]
+				},
+				marker: {
+					radius: 2
+				},
+				lineWidth: 1,
+				states: {
+					hover: {
+						lineWidth: 1
+					}
+				},
+				threshold: null
+			}
+		},
+
+		series: [{
+			type: 'area',
+			name: 'ppm',
+			data: []
+		}]
 	});
+}
+
+function updateChart(title, data) {
+	var chart = $('#chart').highcharts();
+	chart.setTitle({text: 'UX Room Air Monitor (' + title + ')'});
+	chart.series[0].setData(data);
 }
 
 function initBar() {
