@@ -4,15 +4,24 @@
   "description": "Application for CO2 monitoring.",
   "main": "server.js",
   "dependencies": {
+    "canvas-gauges": "^2.0.9-linear",
     "compression": "^1.6.2",
     "express": "^4.14.0",
+    "highcharts": "^5.0.0",
+    "jquery": "^1.9.1",
     "serialport": "^4.0.1",
     "sqlite3": "^3.1.4"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "clean-webpack-plugin": "^0.1.13",
+    "webpack": "^1.13.2"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "build": "./node_modules/.bin/webpack",  
+	"prod": "set NODE_ENV=production && webpack -p --progress --profile --colors"
+  
   },
   "repository": {
     "type": "git",

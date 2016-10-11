@@ -1,0 +1,39 @@
+p#chart {
+	min-height: 300px;
+	width: 99%;
+}
+select {
+	height: 40px;
+}
+form option {
+	font-size: 14px;
+	padding: 5px;
+}
+img {
+	width: 600px;
+}
+table {
+	margin: 40px auto 0px auto;
+	width: 80%;		
+}
+td {
+	border: 0px solid black;
+}
+td.control {
+	text-align: center;
+	vertical-align: top;
+	padding: 50px;
+}
+td.img {
+	text-align: center;
+}
+p.co2 {
+	font: 48px bold;
+	margin: 0;
+}
+p.label {
+	margin-top: 40px;
+}
+.highcharts-credits {
+	display: none;
+}

@@ -1,16 +1,17 @@
-var sqlite3 = require('sqlite3').verbose();
-var SerialPort = require("serialport");
+//var sqlite3 = require('sqlite3').verbose();
+//var SerialPort = require("serialport");
+
 var compression = require('compression');
 var express = require('express');
 var app = express();
 app.use(compression());
 
-var SERVER_PORT = 80;
+var SERVER_PORT = 3000;
 
 var UPDATE_CO2_SENSOR_PER_MINUTE = 4;
 var data = [];
 
-var db = new sqlite3.Database('data.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, function(err){
+/*var db = new sqlite3.Database('data.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, function(err){
 	if (err) {
 		console.log(err);
 	} else {
@@ -18,11 +19,13 @@ var db = new sqlite3.Database('data.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_C
 		getValuesFromDB(limit, function(d) {
 			data = d;
 			runArduinoListener();
-			runWebserver();
+			
 		});
 	}
-});
+});*/
 
+runWebserver();
+/*
 function getValuesFromDB(count, callback) {
 	var data = [];
 	db.each("SELECT time, ppm FROM ppm_values ORDER BY id LIMIT " + count +" OFFSET (SELECT COUNT(*) FROM ppm_values) - "+ count, function(err, row) {
@@ -86,7 +89,7 @@ function saveNewDataEntry(entry) {
 		data.push(entry);
 	});
 }
-
+*/
 function runWebserver() {
 	app.use(express.static('public'));
 

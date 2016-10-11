@@ -4,47 +4,7 @@
   <meta charset="utf-8">
   <title>UX Room Air Monitor</title>
   <link rel="icon" type="image/png" href="/favicon.png" />
-  <style>
-	p#chart {
-		min-height: 300px;
-		width: 100%;
-	}
-	select {
-		height: 40px;
-	}
-	form option {
-		font-size: 14px;
-		padding: 5px;
-	}
-	img {
-		width: 600px;
-	}
-	table {
-		margin: 40px auto 0px auto;
-		width: 80%;		
-	}
-	td {
-		border: 0px solid black;
-	}
-	td.control {
-		text-align: center;
-		vertical-align: top;
-		padding: 50px;
-	}
-	td.img {
-		text-align: center;
-	}
-	p.co2 {
-		font: 48px bold;
-		margin: 0;
-	}
-	p.label {
-		margin-top: 40px;
-	}
-	.highcharts-credits {
-		display: none;
-	}
-  </style>
+  <link rel="stylesheet" type="text/css" href="style.css">
  </head> 
 	<body>
 		<p id="chart">Loading...</p>
@@ -74,10 +34,7 @@
 			</td></tr>
 		</table>
 		
-		<script type="text/javascript" src="js/jquery.min.js"></script>
-		<script type="text/javascript" src="js/highcharts.js"></script>
-		<script type="text/javascript" src="js/gauge.min.js"></script>
-		<script type="text/javascript" src="js/monitor.js"></script>
+		<script type="text/javascript" src="js/bundle.js"></script>
 	</body>
 </html>
 
