@@ -21,35 +21,33 @@ var plugins = [
 if (NODE_ENV === 'production') {
 	console.log('adding production plugins...');
     plugins.push(
-      new webpack.optimize.UglifyJsPlugin({ comments: false }),
-	  new webpack.optimize.DedupePlugin(),
-	  new webpack.optimize.AggressiveMergingPlugin()
-  );
+		new webpack.optimize.UglifyJsPlugin({ comments: false }),
+		new webpack.optimize.DedupePlugin(),
+		new webpack.optimize.AggressiveMergingPlugin()
+    );
 } 
 
 module.exports = {
-
-  entry: {
-    index:  "./src/monitor"
-  },
+	entry: {
+		index:  "./src/monitor"
+	},
 
     resolveLoader: {
-        root: path.join(__dirname, 'node_modules')
+        root: 'node_modules'
 	},
   
-  output: {
-    path:     __dirname + '/public/js',
-    filename: "bundle.js"
-  },
+	output: {
+		path: __dirname + '/public/js',
+		filename: "bundle.js"
+	},
 
-  watch: NODE_ENV == 'development',
-  devtool: NODE_ENV == 'development' ? "cheap-inline-module-source-map" : null,
+	watch: NODE_ENV === 'development',
+	devtool: NODE_ENV === 'development' ? "cheap-inline-module-source-map" : null,
 
-  plugins: plugins, 
+	plugins: plugins, 
 
-  resolve: {
-    modulesDirectories: ['node_modules'],
-    extensions: ['', '.js']
-  },
-
+	resolve: {
+		modulesDirectories: ['node_modules'],
+		extensions: ['', '.js']
+	},
 };

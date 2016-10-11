@@ -1,14 +1,11 @@
 var $ = require("jquery");
 var Highcharts = require("highcharts");
-
 var LinearGauge = require("canvas-gauges").LinearGauge;
-
-
 
 var chart;
 var bar;
 
-$(document).ready(function(){	
+$(document).ready(function() {
 	Highcharts.setOptions({
         global: {
             timezoneOffset: -3 * 60
@@ -42,7 +39,7 @@ $(document).ready(function(){
 function update() {
 	var period = $("#period").val();
 	var periodText = $("#period :selected").text().toLowerCase();
-	$.getJSON( "http://localhost/data/"+period, function( resp ) {
+	$.getJSON( "/data/"+period, function( resp ) {
 		updateData(resp.current, resp.average);
 		updateChart(periodText, resp.data);
 		updateBar(resp.current);
