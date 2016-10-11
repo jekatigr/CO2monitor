@@ -1,10 +1,8 @@
 var sqlite3 = require('sqlite3').verbose();
 var SerialPort = require("serialport");
-
 var compression = require('compression');
 var express = require('express');
 var app = express();
-app.use(compression());
 
 var SERVER_PORT = 80;
 
@@ -89,7 +87,8 @@ function saveNewDataEntry(entry) {
 }
 
 function runWebserver() {
-	app.use(express.static('public'));
+	app.use(compression());
+	app.use(express.static(__dirname+'/public'));
 
 	app.get('/', function (req, res) {
 	    res.render('index', {});
