@@ -2,7 +2,7 @@
   "name": "co2monitor",
   "version": "1.0.0",
   "description": "Application for CO2 monitoring.",
-  "main": "app.js",
+  "main": "server.js",
   "dependencies": {
     "compression": "^1.6.2",
     "express": "^4.14.0",
@@ -12,7 +12,7 @@
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js"
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",

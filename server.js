@@ -5,8 +5,10 @@ var express = require('express');
 var app = express();
 app.use(compression());
 
+var SERVER_PORT = 80;
+
 var UPDATE_CO2_SENSOR_PER_MINUTE = 4;
-var data =[];
+var data = [];
 
 var db = new sqlite3.Database('data.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, function(err){
 	if (err) {
@@ -110,8 +112,8 @@ function runWebserver() {
 		res.send(JSON.stringify(result));
 	});
 
-	app.listen(80, function () {
-		console.log('Webservice started on port 80');
+	app.listen(SERVER_PORT, function () {
+		console.log('Webservice started on port '+ SERVER_PORT);
 	});
 
 	function is_int(value){
