@@ -1,11 +1,20 @@
-var $ = require("jquery");
 var Highcharts = require("highcharts");
 var LinearGauge = require("canvas-gauges").LinearGauge;
 
 var chart;
 var bar;
 
-$(document).ready(function() {
+init(start);
+
+function init(fn) { //replace for $(document).ready
+	if (document.readyState != 'loading'){
+		fn();
+	} else {
+		document.addEventListener('DOMContentLoaded', fn);
+	}
+}
+
+function start() {
 	Highcharts.setOptions({
         global: {
             timezoneOffset: -3 * 60
@@ -33,13 +42,15 @@ $(document).ready(function() {
 	update();
 	setInterval(update, 15000);
 	
-	$("#period").on('change', update);
-});
+	var periodList = document.getElementById('period');
+	periodList.addEventListener('change', update); 
+}
 
 function update() {
-	var period = $("#period").val();
-	var periodText = $("#period :selected").text().toLowerCase();
-	$.getJSON( "/data/"+period, function( resp ) {
+	var periodList = document.getElementById('period');
+	var period = periodList.value;
+	var periodText = periodList.options[periodList.selectedIndex].innerHTML.toLowerCase();
+	getJSON( "/data/"+period, function( resp ) {
 		updateData(resp.current, resp.average);
 		updateChart(periodText, resp.data);
 		updateBar(resp.current);
@@ -47,8 +58,10 @@ function update() {
 }
 
 function updateData(current, average) {
-	$(".current").html(current + ' ppm');
-	$(".average").html(average + ' ppm');
+	var currentLabel = document.getElementById('current');
+	var averageLabel = document.getElementById('average');
+	currentLabel.innerHTML = current + ' ppm';
+	averageLabel.innerHTML = average + ' ppm';
 }
 
 function initChart() {	
@@ -188,7 +201,25 @@ function updateBar(value) {
 	});
 }
 
+function getJSON(url, callback) {
+	var request = new XMLHttpRequest();
+	request.open('GET', url, true);
 
+	request.onload = function() {
+	  if (request.status >= 200 && request.status < 400) {
+		var data = JSON.parse(request.responseText);
+		callback(data);
+	  } else {
+		 console.error("Internal server error!");
+	  }
+	};
+
+	request.onerror = function() {
+		console.error("Connection error!");
+	};
+
+	request.send();
+}
 
 
 
