@@ -1,4 +1,4 @@
-var Highcharts = require("highcharts");
+var Highcharts = require("highcharts/highstock");
 var LinearGauge = require("canvas-gauges").LinearGauge;
 
 var chart;
@@ -64,70 +64,136 @@ function updateData(current, average) {
 	averageLabel.innerHTML = average + ' ppm';
 }
 
-function initChart() {	
-	chart = new Highcharts.Chart({
-		chart: {
-			zoomType: 'x', 
-			height: 400,
-			renderTo: 'chart'
-		},
-		title: {
-			text: 'UX Room Air Monitor'
-		},
-		subtitle: {
-			text: document.ontouchstart === undefined ?
-					'Выделите область графика для масштабирования' : 'Pinch the chart to zoom in'
-		},
-		xAxis: {
-			type: 'datetime'
-		},
-		yAxis: {
-			title: {
-				text: 'ppm'
-			}
-		},
-		legend: {
-			enabled: false
-		},
-		plotOptions: {
-			area: {
-				fillColor: {
-					linearGradient: {
-						x1: 0,
-						y1: 0,
-						x2: 0,
-						y2: 1
-					},
-					stops: [
-						[0, Highcharts.getOptions().colors[0]],
-						[1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-					]
-				},
-				marker: {
-					radius: 2
-				},
-				lineWidth: 1,
-				states: {
-					hover: {
-						lineWidth: 1
-					}
-				},
-				threshold: null
-			}
-		},
+function initChart() {
+    chart = new Highcharts.StockChart('chart', {
+        chart: {
+            zoomType: 'x',
+            height: 400
+        },
+        title: {
+            text: 'UX Room Air Monitor'
+        },
+        subtitle: {
+            text: document.ontouchstart === undefined ?
+                'Выделите область графика для масштабирования' : 'Pinch the chart to zoom in'
+        },
+        xAxis: {
+            type: 'datetime',
+            events : {
+                //afterSetExtremes : setDataWithNewRange
+            }
+        },
+        yAxis: [{
+            title: {
+                text: 'ppm'
+            },
+            opposite:false
+        },{
+            title: {
+                text: 'ppm'
+            },
+            linkedTo:0
+        }],
+        rangeSelector: {
+            buttons: [{
+                type: 'all',
+                count: 1,
+                text: ' Всё '
+            }, {
+                type: 'day',
+                count: 1,
+                text: 'Сутки'
+            },  {
+                type: 'hour',
+                count: 1,
+                text: 'Час'
+            },  {
+                type: 'minute',
+                count: 10,
+                text: '10 Минут'
+            }],
+            buttonTheme: { // styles for the buttons
+                width: 80,
+                style: {
+                    fontSize: 12,
+                    color: '#039',
+                    fontWeight: 'bold'
+                },
+                states: {
+                    hover: {},
+                    select: {
+                        fill: '#039',
+                        style: {
+                            color: 'white'
+                        }
+                    }
+                }
+            },
+            selected: 3,
+            inputEnabled: false
+        },
+        /*navigator : {
+            adaptToUpdatedData: false,
+            series : {
+                data : []
+            }
+        },*/
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            area: {
+                fillColor: {
+                    linearGradient: {
+                        x1: 0,
+                        y1: 0,
+                        x2: 0,
+                        y2: 1
+                    },
+                    stops: [
+                        [0, Highcharts.getOptions().colors[0]],
+                        [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                    ]
+                },
+                marker: {
+                    radius: 2
+                },
+                lineWidth: 1,
+                states: {
+                    hover: {
+                        lineWidth: 1
+                    }
+                },
+                threshold: null
+            }
+        },
 
-		series: [{
-			type: 'area',
-			name: 'ppm',
-			data: []
-		}]
-	});
+        series: [{
+            type: 'area',
+            name: 'ppm',
+            data: []
+        }]
+    });
 }
 
 function updateChart(title, data) {
-	chart.setTitle({text: 'UX Room Air Monitor (' + title + ')'});
-	chart.series[0].setData(data);
+    //chart.setTitle({text: 'UX Room Air Monitor (' + title + ')'});
+    chart.series[0].setData(data);
 }
+
+/*function setDataWithNewRange(e) {
+    var url,
+        currentExtremes = this.getExtremes(),
+        range = e.max - e.min;
+
+    chart.showLoading('Loading data from server...');
+    $.getJSON('http://www.highcharts.com/samples/data/from-sql.php?start='+ Math.round(e.min) +
+        '&end='+ Math.round(e.max) +'&callback=?', function(data) {
+
+        chart.series[0].setData(data);
+        chart.hideLoading();
+    });
+}*/
 
 function initBar() {
 	bar = new LinearGauge({
@@ -195,7 +261,6 @@ function initBar() {
 }
 
 function updateBar(value) {
-	//bar.value = value;
 	bar.update({
 		value: value
 	});
