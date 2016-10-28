@@ -94,6 +94,13 @@ function initChart() {
             },
             linkedTo:0
         }],
+        tooltip: {
+            formatter: function() {
+                return Highcharts.dateFormat('%d.%m.%Y', this.x) + '<br>' +
+                    Highcharts.dateFormat('%I:%M:%S', this.x) + '<br>' +
+                    '<b>' + Highcharts.numberFormat(this.y, 0) + ' ppm</b>';
+            }
+        },
         rangeSelector: {
             buttons: [{
                 type: 'all',
