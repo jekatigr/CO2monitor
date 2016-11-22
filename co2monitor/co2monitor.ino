@@ -179,7 +179,7 @@ uint32_t getPpmValue()
 void setup()
 {
     matrix.begin(displaybuf, WIDTH, HEIGHT);
-    //matrix.reverse();
+    matrix.reverse();
     
     Serial.begin(9600);
     mySerial.begin(9600);
