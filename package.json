@@ -2,7 +2,7 @@
   "name": "co2monitor",
   "version": "1.0.0",
   "description": "Application for CO2 monitoring.",
-  "main": "server.js",
+  "main": "start.js",
   "dependencies": {
     "canvas-gauges": "^2.0.9-linear",
     "compression": "^1.6.2",
@@ -12,14 +12,20 @@
     "sqlite3": "^3.1.4"
   },
   "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-core": "^6.21.0",
+    "babel-preset-env": "^1.1.4",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-stage-0": "^6.16.0",
+    "babel-preset-stage-2": "^6.18.0",
     "clean-webpack-plugin": "^0.1.13",
     "webpack": "^1.13.2"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
+    "start": "babel-node start.js --presets env",
     "build": "./node_modules/.bin/webpack --watch",
-    "dev": "./node_modules/.bin/webpack && node server.js",
+    "build-server": "babel start.js -d dist --presets env",
+    "dev": "./node_modules/.bin/webpack && node start.js",
     "prod": "set NODE_ENV=production && webpack -p --progress --profile --colors"
   },
   "repository": {
