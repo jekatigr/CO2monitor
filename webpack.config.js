@@ -21,7 +21,13 @@ var plugins = [
 if (NODE_ENV === 'production') {
 	console.log('adding production plugins...');
     plugins.push(
-		new webpack.optimize.UglifyJsPlugin({ comments: false }),
+		new webpack.optimize.UglifyJsPlugin({
+			comments: false,
+            compress: {
+                warnings: false,
+                drop_console: true
+            },
+		}),
 		new webpack.optimize.DedupePlugin(),
 		new webpack.optimize.AggressiveMergingPlugin()
     );
@@ -49,5 +55,5 @@ module.exports = {
 	resolve: {
 		modulesDirectories: ['node_modules'],
 		extensions: ['', '.js']
-	},
+	}
 };

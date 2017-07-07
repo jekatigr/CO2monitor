@@ -1,29 +1,25 @@
-/**
- * Created by evgr0715 on 28.12.2016.
- */
-import { baudRate, serialPortPath } from './config';
-import Database from './db'
+import { baudRate, serialPortPath } from './Config';
+import Database from './Database'
+import {TABLE_ALL, TABLE_HOUR, TABLE_10_MIN} from './TableNames'
 
 let SerialPort = require("serialport");
+let port;
 
-let data = {
-    all: [],
-    minutes10: []
-};
+let dataForLastHour = [];
+let dataForLast10Minutes = [];
 let lastSavingMinute = -1;
 let lastSavingHour = -1;
 
 class HardwareService {
     static init(initialData) {
-        if (initialData && initialData.all && initialData.all.length) {
-            debugger;
-            for (let value of initialData.all) {
-                data.all.push(value[1]);
+        if (initialData && initialData.data_all && initialData.data_all.length) {
+            for (let value of initialData.data_all) {
+                dataForLastHour.push(value[1]);
             }
         }
-        if (initialData && initialData.minutes10 && initialData.minutes10.length) {
-            for (let value of initialData.minutes10) {
-                data.minutes10.push(value[1]);
+        if (initialData && initialData.data_10_min && initialData.data_10_min.length) {
+            for (let value of initialData.data_10_min) {
+                dataForLast10Minutes.push(value[1]);
             }
         }
         HardwareService.runArduinoListener();
@@ -31,51 +27,51 @@ class HardwareService {
 
     static runArduinoListener() {
         console.log(`Starting arduino listener...`);
-        /*port = new SerialPort(serialPortPath, {
+        port = new SerialPort(serialPortPath, {
             baudRate: baudRate,
             parser: SerialPort.parsers.readline('\n')
         });
 
         port.on('open', function() {
-            console.log('Arduino connected');
+            console.log('Arduino connected.');
         });
 
         port.on('data', function (d) {
-            var ppm = eval(d.trim());
-            this.saveData(ppm);
+            let ppm = eval(d.trim());
+            HardwareService.saveData(ppm);
         });
 
         port.on('error', function(err) {
             console.log('Error: ', err.message);
-        });*/
-        setInterval(function(){
-            HardwareService.saveData(Math.floor(Math.random() * (1000 - 400) + 400));
-        }, 15000);
-        console.log(`Arduino listener started.`);
+        });
     }
 
     static saveData(ppm) {
         let time = new Date();
-        Database.saveData(time.getTime(), ppm, "ppm_values_all");
-        data.all.push(ppm);
+        let seconds = time.getSeconds();
+        time.setSeconds(Math.floor(seconds / 15) * 15, 0);
+        let time_string = time.toLocaleString('ru-RU', {year:"numeric", month:"2-digit", day:"2-digit", hour: "2-digit", minute: "2-digit", second:"2-digit"});
+        Database.saveData(time_string, ppm, TABLE_ALL);
+        dataForLastHour.push(ppm);
         let currentMinute = time.getMinutes();
-        if (currentMinute % 10 == 0 && Math.floor(currentMinute / 10) != lastSavingMinute) {
+
+        if (currentMinute % 10 === 0 && time.getMinutes() !== lastSavingMinute) {
             let res = 0;
-            for (let value of data.all) {
+            for (let value of dataForLast10Minutes) {
                 res += value;
             }
-            Database.saveData(time.getTime(), Math.floor(res / data.all.length), "ppm_values_10min");
-            data.all = [];
-            data.minutes10.push(res);
-            lastSavingMinute = Math.floor(currentMinute / 10);
+            Database.saveData(time_string, Math.floor(res / dataForLast10Minutes.length), TABLE_10_MIN);
+            dataForLast10Minutes = [];
+            lastSavingMinute = time.getMinutes();
         }
-        if (currentMinute == 0 && time.getHours() != lastSavingHour) {
+
+        if (currentMinute === 0 && time.getHours() !== lastSavingHour) {
             let res = 0;
-            for (let value of data.minutes10) {
+            for (let value of dataForLastHour) {
                 res += value;
             }
-            Database.saveData(time.getTime(), Math.floor(res / data.minutes10.length), "ppm_values_hour");
-            data.minutes10 = [];
+            Database.saveData(time_string, Math.floor(res / dataForLastHour.length), TABLE_HOUR);
+            dataForLastHour = [];
             lastSavingHour = time.getHours();
         }
     }

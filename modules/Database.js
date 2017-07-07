@@ -1,4 +1,5 @@
-import { dbFileName } from './config';
+import { dbFileName } from './Config';
+import {TABLE_ALL, TABLE_HOUR, TABLE_10_MIN} from "./TableNames";
 
 let fs = require('fs');
 let sqlite3 = require('sqlite3').verbose();
@@ -13,9 +14,9 @@ class Database {
 
         if (!exists) {
             db.serialize(function () {
-                db.run('CREATE TABLE "ppm_values_10min" ("id" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , "time" DATETIME NOT NULL  DEFAULT CURRENT_TIMESTAMP, "ppm" INTEGER NOT NULL )');
-                db.run('CREATE TABLE "ppm_values_hour" ("id" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , "time" DATETIME NOT NULL  DEFAULT CURRENT_TIMESTAMP, "ppm" INTEGER NOT NULL )');
-                db.run('CREATE TABLE "ppm_values_all" ("id" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , "time" DATETIME NOT NULL  DEFAULT CURRENT_TIMESTAMP, "ppm" INTEGER NOT NULL )');
+                db.run('CREATE TABLE "ppm_values_10min" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "time" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "ppm" INTEGER )');
+                db.run('CREATE TABLE "ppm_values_hour" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "time" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "ppm" INTEGER )');
+                db.run('CREATE TABLE "ppm_values_all" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "time" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "ppm" INTEGER )');
                 console.log(`Database file created.`);
             });
         }
@@ -27,21 +28,28 @@ class Database {
             minutes10Start.setMinutes(Math.floor(currentTimestamp.getMinutes() / 10) * 10, 0, 0);
             let hourStart = new Date(currentTimestamp.getTime());
             hourStart.setMinutes(0, 0, 0);
-            Database.getData(hourStart.getTime(), currentTimestamp.getTime(), "ppm_values_all", function(dataAll) {
-                Database.getData(minutes10Start.getTime(), currentTimestamp.getTime(), "ppm_values_10min", function(data10Min) {
-                    let initialData = {
-                        all: dataAll,
-                        minutes10: data10Min
-                    };
-                    callback(initialData);
-                })
+            Database.getData(parseInt((hourStart.getTime() / 1000).toFixed(0)), parseInt((currentTimestamp.getTime() / 1000).toFixed(0)), TABLE_ALL, (data_all) => {
+                Database.getData(parseInt((minutes10Start.getTime() / 1000).toFixed(0)), parseInt((currentTimestamp.getTime() / 1000).toFixed(0)), TABLE_ALL, (data_10_min) => {
+                    callback({
+                        data_all: data_all,
+                        data_10_min: data_10_min
+                    });
+                });
             });
         }
     }
 
+    /**
+     * Get ppm values from DB.
+     * @param min unix timestamp (from)
+     * @param max unix timestamp (to)
+     * @param tableName table, where required data is stored
+     * @param callback function which will be called with obtained result in args
+     */
     static getData(min, max, tableName, callback) {
         let data = [];
-        let sql = "SELECT time, ppm FROM "+ tableName +" WHERE time BETWEEN "+ min +" AND "+ max +" ORDER BY time";
+        let sql = "SELECT CAST(strftime('%s', time, 'utc') AS INT) * 1000 as time, ppm FROM "+ tableName +" WHERE CAST(strftime('%s', time, 'utc') AS INT) BETWEEN "+ min +" AND "+ max +" ORDER BY time";
+        console.log(sql);
         db.each(sql, function(err, row) {
             if (err) {
                 console.log(err);

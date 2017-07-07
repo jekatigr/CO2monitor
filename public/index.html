@@ -10,30 +10,13 @@
         <div>
             <p id="chart">Loading...</p>
         </div>
-		<table>
-			<tr><td>
-				<canvas id="bar"></canvas>
-			</td><td class="control">
-				<form>
-					<select id="period">
-						<option value="10" selected>За 10 минут</option>
-						<option value="60">За последний час</option>
-						<option value="240">За четыре часа</option>
-						<option value="720">За 12 часов</option>
-						<option value="1440">За сутки</option>
-					</select>
-				</form>
-				
+		<div class="flex-container">
+			<div class="info">
 				<p class="label">Текущий уровень CO2:</p>
 				<p class="co2 current" id="current">Loading...</p>
-				
-				<p class="label">Средний уровень за период:</p>
-				<p class="co2 average" id="average">Loading...</p>
-				
-			</td><td class="img">
-				<img src="ppm.jpg"/>
-			</td></tr>
-		</table>
+			</div>
+			<img src="ppm.jpg"/>
+		</div>
 		
 		<script type="text/javascript" src="js/bundle.js"></script>
 	</body>

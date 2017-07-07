@@ -1,39 +1,24 @@
 p#chart {
 	min-height: 400px;
 	width: 100%;
+	text-align: center;
 }
-select {
-	height: 40px;
-}
-form option {
-	font-size: 14px;
-	padding: 5px;
+.flex-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 img {
 	width: 600px;
 }
-table {
-	margin: 40px auto 0 auto;
-	width: 80%;		
-}
-td {
-	border: 0 solid black;
-}
-td.control {
+.info {
+	display: inline-block;
 	text-align: center;
 	vertical-align: top;
-	padding: 50px;
-}
-td.img {
-	text-align: center;
+	width: 600px;
+	padding-bottom: 60px;
 }
 p.co2 {
 	font: 48px bold;
 	margin: 0;
-}
-p.label {
-	margin-top: 40px;
-}
-.highcharts-credits {
-	display: none;
 }

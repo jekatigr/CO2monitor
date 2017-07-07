@@ -3,13 +3,15 @@
   "version": "1.0.0",
   "description": "Application for CO2 monitoring.",
   "main": "start.js",
+  "engines": {
+    "node": ">=7.0.0"
+  },
   "dependencies": {
-    "canvas-gauges": "^2.0.9-linear",
     "compression": "^1.6.2",
     "express": "^4.14.0",
-    "highcharts": "^5.0.0",
-    "serialport": "^4.0.3",
-    "sqlite3": "^3.1.4"
+    "highcharts": "^5.0.12",
+    "serialport": "^4.0.7",
+    "sqlite3": "^3.1.8"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
@@ -23,9 +25,9 @@
   },
   "scripts": {
     "start": "babel-node start.js --presets env",
-    "build": "./node_modules/.bin/webpack --watch",
+    "build": "set NODE_ENV=development && webpack --watch",
     "build-server": "babel start.js -d dist --presets env",
-    "dev": "./node_modules/.bin/webpack && node start.js",
+    "dev": "set NODE_ENV=development && webpack && babel-node start.js --presets env",
     "prod": "set NODE_ENV=production && webpack -p --progress --profile --colors"
   },
   "repository": {
