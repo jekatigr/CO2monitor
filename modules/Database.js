@@ -1,5 +1,5 @@
 import { dbFileName } from './Config';
-import {TABLE_ALL, TABLE_HOUR, TABLE_10_MIN} from "./TableNames";
+import { TABLE_ALL } from "./TableNames";
 
 let fs = require('fs');
 let sqlite3 = require('sqlite3').verbose();
@@ -50,31 +50,39 @@ class Database {
         let data = [];
         let sql = "SELECT CAST(strftime('%s', time, 'utc') AS INT) * 1000 as time, ppm FROM "+ tableName +" WHERE CAST(strftime('%s', time, 'utc') AS INT) BETWEEN "+ min +" AND "+ max +" ORDER BY time";
         console.log(sql);
-        db.each(sql, function(err, row) {
-            if (err) {
-                console.log(err);
-                console.log(sql);
-            } else {
-                if (row != null) {
-                    data.push([row.time, row.ppm]);
+        try {
+            db.each(sql, function (err, row) {
+                if (err) {
+                    console.log(err);
+                    console.log(sql);
+                } else {
+                    if (row !== null) {
+                        data.push([row.time, row.ppm]);
+                    }
                 }
-            }
-        }, function(err, rowcount){
-            if (err) {
-                console.log(err);
-                console.log(sql);
-            } else {
-                if (callback) {
-                    callback(data);
+            }, function (err, rowcount) {
+                if (err) {
+                    console.log(err);
+                    console.log(sql);
+                } else {
+                    if (callback) {
+                        callback(data);
+                    }
                 }
-            }
-        });
+            });
+        } catch (e) {
+            console.log("Error in getData, message:" + e);
+        }
     }
 
     static saveData(time, ppm, tableName) {
-        var stmt = db.prepare("INSERT INTO "+ tableName +" VALUES (?, ?, ?)");
-        stmt.run(null, time, ppm);
-        stmt.finalize();
+        try {
+            let stmt = db.prepare("INSERT INTO "+ tableName +" VALUES (?, ?, ?)");
+            stmt.run(null, time, ppm);
+            stmt.finalize();
+        } catch (e) {
+            console.log("Error in getData, message:" + e);
+        }
     }
 }
 

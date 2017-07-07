@@ -1,7 +1,6 @@
 let Highcharts = require("highcharts/highstock");
 
 let chart;
-let bar;
 
 const TIMEZONE_OFFSET_IN_MINUTES = -3 * 60;
 
@@ -40,12 +39,9 @@ function start() {
 
 	initChart();
 	//setInterval(update, 15000);
-	
-	//var periodList = document.getElementById('period');
-	//periodList.addEventListener('change', update);
 }
 
-function update() {
+/*function update() {
     console.log("updating data...");
 	let periodList = document.getElementById('period');
 	let period = periodList.value;
@@ -53,12 +49,12 @@ function update() {
 	let min = chart.xAxis[0].getExtremes().min;
 	let max = chart.xAxis[0].getExtremes().max;
     getJSON( "/data?from="+ Math.floor(min) +"&to="+ Math.floor(max), function( resp ) {
-        updateData(resp.current, resp.average);
+        updateData(resp.current);
 		updateChart(resp.data);
 	});
-}
+}*/
 
-function updateData(current, average) {
+function updateData(current) {
 	let currentLabel = document.getElementById('current');
 	currentLabel.innerHTML = current + ' ppm';
 }
@@ -66,7 +62,7 @@ function updateData(current, average) {
 function initChart() {
 	getJSON( "/data", function( resp ) {
         resp.navigator = [].concat(resp.navigator, [[Date.now(), null]]);
-        updateData(resp.current, 0);
+        updateData(resp.current);
         chart = new Highcharts.StockChart('chart', {
             chart: {
                 zoomType: 'x',
@@ -212,10 +208,9 @@ function setDataWithNewRange(e) {
                 ${secondsToString(e.max-e.min)}`);
 
     chart.showLoading('Загрузка данных...');
-    getJSON( "/data?from="+ Math.floor(e.min/* - TIMEZONE_OFFSET_IN_MINUTES * 60 * 1000*/) +"&to="+ Math.floor(e.max/* - TIMEZONE_OFFSET_IN_MINUTES * 60 * 1000*/), function( resp ) {
-        updateData(resp.current, 0);
+    getJSON( "/data?from="+ Math.floor(e.min) +"&to="+ Math.floor(e.max), function( resp ) {
+        updateData(resp.current);
         updateChart(resp.data);
-        //updateBar(resp.current);
         chart.hideLoading();
     });
 }

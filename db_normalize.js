@@ -13,7 +13,7 @@ db.each(sql, function(err, row) {
         console.log(err);
         console.log(sql);
     } else {
-        if (row != null) {
+        if (row !== null) {
             data.push([row.time, row.ppm]);
         }
     }
