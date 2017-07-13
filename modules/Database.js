@@ -1,4 +1,4 @@
-import { dbFileName } from './Config';
+import { dbFileName, PRODUCTION } from './Config';
 import { TABLE_ALL } from "./TableNames";
 
 let fs = require('fs');
@@ -57,7 +57,7 @@ class Database {
             function (resolve, reject) {
                 let data = [];
                 let sql = "SELECT CAST(strftime('%s', time, 'utc') AS INT) * 1000 as time, ppm FROM "+ tableName +" WHERE CAST(strftime('%s', time, 'utc') AS INT) BETWEEN "+ min +" AND "+ max +" ORDER BY time";
-                console.log(sql);
+                if (!PRODUCTION) console.log(sql);
                 try {
                     db.each(sql, function (err, row) {
                         if (err) {

@@ -1,4 +1,4 @@
-import { baudRate, serialPortPath } from './Config';
+import { baudRate, serialPortPath, PRODUCTION } from './Config';
 import Database from './Database'
 import {TABLE_ALL, TABLE_HOUR, TABLE_10_MIN} from './TableNames'
 import CurrentCO2Value from './CurrentCO2Value'
@@ -57,23 +57,23 @@ class HardwareService {
         dataForLastHour.push(ppm);
         let currentMinute = time.getMinutes();
 
-        if (currentMinute % 10 === 0 && time.getMinutes() !== lastSavingMinute) {
+        if (currentMinute % 10 === 0 && time.getMinutes() !== lastSavingMinute && dataForLast10Minutes.length > 0) {
             let res = 0;
             for (let value of dataForLast10Minutes) {
                 res += value;
             }
-            console.log(`saving 10 min result: ${time_string}, ${Math.floor(res / dataForLast10Minutes.length)}, ${TABLE_10_MIN}`);
+            if (!PRODUCTION) console.log(`saving 10 min result: ${time_string}, ${Math.floor(res / dataForLast10Minutes.length)}, ${TABLE_10_MIN}`);
             Database.saveData(time_string, Math.floor(res / dataForLast10Minutes.length), TABLE_10_MIN);
             dataForLast10Minutes = [];
             lastSavingMinute = time.getMinutes();
         }
 
-        if (currentMinute === 0 && time.getHours() !== lastSavingHour) {
+        if (currentMinute === 0 && time.getHours() !== lastSavingHour && dataForLastHour.length > 0) {
             let res = 0;
             for (let value of dataForLastHour) {
                 res += value;
             }
-            console.log(`saving hour result: ${time_string}, ${Math.floor(res / dataForLastHour.length)}, ${TABLE_HOUR}`);
+            if (!PRODUCTION) console.log(`saving hour result: ${time_string}, ${Math.floor(res / dataForLastHour.length)}, ${TABLE_HOUR}`);
             Database.saveData(time_string, Math.floor(res / dataForLastHour.length), TABLE_HOUR);
             dataForLastHour = [];
             lastSavingHour = time.getHours();

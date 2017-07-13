@@ -53,145 +53,142 @@ function setCurrentPpmValue(current) {
 }
 
 function initChart() {
-	getJSON( "/data", function( resp ) {
-        resp.navigator = [].concat(resp.navigator, [[Date.now(), null]]);
-        setCurrentPpmValue(resp.current);
-        chart = new Highcharts.StockChart('chart', {
-            chart: {
-                zoomType: 'x',
-                height: 400,
-                marginLeft: 120,
-                marginRight: 120
+    initialRenderData.navigator = [].concat(initialRenderData.navigator, [[Date.now(), null]]);
+    chart = new Highcharts.StockChart('chart', {
+        chart: {
+            zoomType: 'x',
+            height: 400,
+            marginLeft: 120,
+            marginRight: 120
+        },
+        scrollbar: {
+            liveRedraw: true
+        },
+        title: {
+            text: 'UX Room Air Monitor'
+        },
+        subtitle: {
+            text: document.ontouchstart === undefined ?
+                'Выделите область графика для масштабирования' : 'Pinch the chart to zoom in'
+        },
+        xAxis: {
+            type: 'datetime',
+            events : {
+                afterSetExtremes : setDataWithNewRange
             },
-            scrollbar: {
-                liveRedraw: true
-            },
+            minRange: 10 * 60 * 1000
+        },
+        yAxis: [{
             title: {
-                text: 'UX Room Air Monitor'
+                text: 'ppm'
             },
-            subtitle: {
-                text: document.ontouchstart === undefined ?
-                    'Выделите область графика для масштабирования' : 'Pinch the chart to zoom in'
-            },
-            xAxis: {
-                type: 'datetime',
-                events : {
-                    afterSetExtremes : setDataWithNewRange
-                },
-                minRange: 10 * 60 * 1000
-            },
-            yAxis: [{
-                title: {
-                    text: 'ppm'
-                },
-                labels: {
-                    formatter: function() {
-                        return this.value;
-                    }
-                },
-                opposite:false
-            },{
-                title: {
-                    text: 'ppm'
-                },
-                labels: {
-                    formatter: function() {
-                        return this.value;
-                    }
-                },
-                linkedTo: 0
-            }],
-            tooltip: {
+            labels: {
                 formatter: function() {
-                    return Highcharts.dateFormat('%d.%m.%Y', this.x) + '<br>' +
-                        Highcharts.dateFormat('%H:%M:%S', this.x) + '<br>' +
-                        '<b>' + Highcharts.numberFormat(this.y, 0) + ' ppm</b>';
+                    return this.value;
                 }
             },
-            rangeSelector: {
-                buttons: [{
-                    type: 'all',
-                    count: 1,
-                    text: ' Всё '
-                }, {
-                    type: 'day',
-                    count: 7,
-                    text: 'Неделя'
-                }, {
-                    type: 'day',
-                    count: 1,
-                    text: 'Сутки'
-                },  {
-                    type: 'minute',
-                    count: 10,
-                    text: '10 Минут'
-                }],
-                buttonTheme: { // styles for the buttons
-                    width: 80,
-                    style: {
-                        fontSize: 12,
-                        color: '#039',
-                        fontWeight: 'bold'
-                    },
-                    states: {
-                        hover: {},
-                        select: {
-                            fill: '#039',
-                            style: {
-                                color: 'white'
-                            }
+            opposite:false
+        },{
+            title: {
+                text: 'ppm'
+            },
+            labels: {
+                formatter: function() {
+                    return this.value;
+                }
+            },
+            linkedTo: 0
+        }],
+        tooltip: {
+            formatter: function() {
+                return Highcharts.dateFormat('%d.%m.%Y', this.x) + '<br>' +
+                    Highcharts.dateFormat('%H:%M:%S', this.x) + '<br>' +
+                    '<b>' + Highcharts.numberFormat(this.y, 0) + ' ppm</b>';
+            }
+        },
+        rangeSelector: {
+            buttons: [{
+                type: 'all',
+                count: 1,
+                text: ' Всё '
+            }, {
+                type: 'day',
+                count: 7,
+                text: 'Неделя'
+            }, {
+                type: 'day',
+                count: 1,
+                text: 'Сутки'
+            },  {
+                type: 'minute',
+                count: 10,
+                text: '10 Минут'
+            }],
+            buttonTheme: { // styles for the buttons
+                width: 80,
+                style: {
+                    fontSize: 12,
+                    color: '#039',
+                    fontWeight: 'bold'
+                },
+                states: {
+                    hover: {},
+                    select: {
+                        fill: '#039',
+                        style: {
+                            color: 'white'
                         }
                     }
+                }
+            },
+            selected: 3,
+            inputEnabled: false
+        },
+        navigator : {
+            adaptToUpdatedData: false,
+            series : {
+                data : initialRenderData.navigator
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            area: {
+                fillColor: {
+                    linearGradient: {
+                        x1: 0,
+                        y1: 0,
+                        x2: 0,
+                        y2: 1
+                    },
+                    stops: [
+                        [0, Highcharts.getOptions().colors[0]],
+                        [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                    ]
                 },
-                selected: 3,
-                inputEnabled: false
-            },
-            navigator : {
-                adaptToUpdatedData: false,
-                series : {
-                    data : resp.navigator
-                }
-            },
-            legend: {
-                enabled: false
-            },
-            plotOptions: {
-                area: {
-                    fillColor: {
-                        linearGradient: {
-                            x1: 0,
-                            y1: 0,
-                            x2: 0,
-                            y2: 1
-                        },
-                        stops: [
-                            [0, Highcharts.getOptions().colors[0]],
-                            [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                        ]
-                    },
-                    marker: {
-                        radius: 2
-                    },
-                    lineWidth: 1,
-                    states: {
-                        hover: {
-                            lineWidth: 1
-                        }
-                    },
-                    threshold: null
-                }
-            },
+                marker: {
+                    radius: 2
+                },
+                lineWidth: 1,
+                states: {
+                    hover: {
+                        lineWidth: 1
+                    }
+                },
+                threshold: null
+            }
+        },
 
-            series: [{
-                type: 'area',
-                name: 'ppm',
-                data: resp.data,
-                dataGrouping: {
-                    enabled: false
-                }
-            }]
-        });
-	});
+        series: [{
+            type: 'area',
+            name: 'ppm',
+            data: initialRenderData.data,
+            dataGrouping: {
+                enabled: false
+            }
+        }]
+    });
 }
 
 function updateChart(data) {

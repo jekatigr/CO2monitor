@@ -13,11 +13,13 @@
 		<div class="flex-container">
 			<div class="info">
 				<p class="label">Текущий уровень CO2:</p>
-				<p class="co2 current" id="current">Loading...</p>
+				<p class="co2 current" id="current">[[= model.current]]</p>
 			</div>
 			<img src="ppm.jpg"/>
 		</div>
-		
+		<script>
+            var initialRenderData = [[= JSON.stringify(model) ]];
+        </script>
 		<script type="text/javascript" src="js/bundle.js"></script>
 	</body>
 </html>
