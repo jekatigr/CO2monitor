@@ -196,8 +196,10 @@ function updateChart(data) {
 }
 
 function setDataWithNewRange(e) {
-    console.log(`min: ${e.min}, max: ${e.max}, hi:
-                ${secondsToString(e.max-e.min)}`);
+    if (process.env.NODE_ENV === 'development') {
+        console.log(`min: ${e.min}, max: ${e.max}, hi:
+                ${secondsToString(e.max - e.min)}`);
+    }
 
     chart.showLoading('Загрузка данных...');
     getJSON( "/data?from="+ Math.floor(e.min) +"&to="+ Math.floor(e.max), function( resp ) {
