@@ -38,40 +38,30 @@ function start() {
     });
 
 	initChart();
-	//setInterval(update, 15000);
+	setInterval(updatePpmValue, 15000);
 }
 
-/*function update() {
-    console.log("updating data...");
-	let periodList = document.getElementById('period');
-	let period = periodList.value;
-	let periodText = periodList.options[periodList.selectedIndex].innerHTML.toLowerCase();
-	let min = chart.xAxis[0].getExtremes().min;
-	let max = chart.xAxis[0].getExtremes().max;
-    getJSON( "/data?from="+ Math.floor(min) +"&to="+ Math.floor(max), function( resp ) {
-        updateData(resp.current);
-		updateChart(resp.data);
-	});
-}*/
+function updatePpmValue() {
+    getJSON( "/current", function( resp ) {
+        setCurrentPpmValue(resp.current);
+    });
+}
 
-function updateData(current) {
+function setCurrentPpmValue(current) {
 	let currentLabel = document.getElementById('current');
-	currentLabel.innerHTML = current + ' ppm';
+	currentLabel.innerHTML = current;
 }
 
 function initChart() {
 	getJSON( "/data", function( resp ) {
         resp.navigator = [].concat(resp.navigator, [[Date.now(), null]]);
-        updateData(resp.current);
+        setCurrentPpmValue(resp.current);
         chart = new Highcharts.StockChart('chart', {
             chart: {
                 zoomType: 'x',
                 height: 400,
                 marginLeft: 120,
-                marginRight: 120,
-                events: {
-                    //load: function(){console.log("loaded!"); update.call(window);}
-                }
+                marginRight: 120
             },
             scrollbar: {
                 liveRedraw: true
@@ -103,6 +93,11 @@ function initChart() {
             },{
                 title: {
                     text: 'ppm'
+                },
+                labels: {
+                    formatter: function() {
+                        return this.value;
+                    }
                 },
                 linkedTo: 0
             }],
@@ -209,7 +204,7 @@ function setDataWithNewRange(e) {
 
     chart.showLoading('Загрузка данных...');
     getJSON( "/data?from="+ Math.floor(e.min) +"&to="+ Math.floor(e.max), function( resp ) {
-        updateData(resp.current);
+        setCurrentPpmValue(resp.current);
         updateChart(resp.data);
         chart.hideLoading();
     });

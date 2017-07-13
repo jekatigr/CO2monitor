@@ -14,9 +14,9 @@ class Database {
 
         if (!exists) {
             db.serialize(function () {
-                db.run('CREATE TABLE "ppm_values_10min" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "time" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "ppm" INTEGER )');
-                db.run('CREATE TABLE "ppm_values_hour" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "time" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "ppm" INTEGER )');
-                db.run('CREATE TABLE "ppm_values_all" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "time" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "ppm" INTEGER )');
+                db.run('CREATE TABLE "ppm_values_10min" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "time" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "ppm" INTEGER NOT NULL)');
+                db.run('CREATE TABLE "ppm_values_hour" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "time" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "ppm" INTEGER NOT NULL)');
+                db.run('CREATE TABLE "ppm_values_all" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "time" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "ppm" INTEGER NOT NULL)');
                 console.log(`Database file created.`);
             });
         }
@@ -77,11 +77,21 @@ class Database {
 
     static saveData(time, ppm, tableName) {
         try {
-            let stmt = db.prepare("INSERT INTO "+ tableName +" VALUES (?, ?, ?)");
-            stmt.run(null, time, ppm);
+            let stmt = db.prepare("INSERT INTO "+ tableName +" VALUES (?, ?, ?)", function(err) {
+                if (err) {
+                    console.log("prepare");
+                    console.log(err);
+                }
+            });
+            stmt.run(null, time, ppm, function(err) {
+                if (err) {
+                    console.log("run");
+                    console.log(err);
+                }
+            });
             stmt.finalize();
         } catch (e) {
-            console.log("Error in getData, message:" + e);
+            console.log("Error in saveData, message:" + e);
         }
     }
 }

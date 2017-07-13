@@ -1,6 +1,7 @@
 import { baudRate, serialPortPath } from './Config';
 import Database from './Database'
 import {TABLE_ALL, TABLE_HOUR, TABLE_10_MIN} from './TableNames'
+import CurrentCO2Value from './CurrentCO2Value'
 
 let SerialPort = require("serialport");
 let port;
@@ -38,6 +39,7 @@ class HardwareService {
 
         port.on('data', function (d) {
             let ppm = eval(d.trim());
+            CurrentCO2Value.updateCurrentValue(ppm);
             HardwareService.saveData(ppm);
         });
 
@@ -60,6 +62,7 @@ class HardwareService {
             for (let value of dataForLast10Minutes) {
                 res += value;
             }
+            console.log(`saving 10 min result: ${time_string}, ${Math.floor(res / dataForLast10Minutes.length)}, ${TABLE_10_MIN}`);
             Database.saveData(time_string, Math.floor(res / dataForLast10Minutes.length), TABLE_10_MIN);
             dataForLast10Minutes = [];
             lastSavingMinute = time.getMinutes();
@@ -70,6 +73,7 @@ class HardwareService {
             for (let value of dataForLastHour) {
                 res += value;
             }
+            console.log(`saving hour result: ${time_string}, ${Math.floor(res / dataForLastHour.length)}, ${TABLE_HOUR}`);
             Database.saveData(time_string, Math.floor(res / dataForLastHour.length), TABLE_HOUR);
             dataForLastHour = [];
             lastSavingHour = time.getHours();
