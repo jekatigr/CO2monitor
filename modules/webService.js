@@ -50,27 +50,35 @@ class WebService {
             to = (to > 1000) ? parseInt((to / 1000).toFixed(0)) : 0;
 
             if (!isInitial) {
-                Database.getData(from, to, tableName, function (result) {
-                    let data = {
-                        current: CurrentCO2Value.getCurrentValue(),
-                        data: result
-                    };
-
-                    res.send(JSON.stringify(data));
-                })
-            } else { //fill data with two arrays - for navigator and for chart
-                Database.getData(from, to, TABLE_HOUR, function (navigator_data) {
-
-                    Database.getData(to - 10 * 60, to, TABLE_ALL, function (result) {
+                Database.getData(from, to, tableName)
+                    .then((result) => {
                         let data = {
                             current: CurrentCO2Value.getCurrentValue(),
-                            data: result,
-                            navigator: navigator_data
+                            data: result
                         };
 
                         res.send(JSON.stringify(data));
                     })
+                    .catch(err => {
+                        console.error(err);
+                    })
+            } else { //fill data with two arrays - for navigator and for chart
+                Promise.all([
+                    Database.getData(from, to, TABLE_HOUR),
+                    Database.getData(to - 10 * 60, to, TABLE_ALL)
+                ])
+                .then(([navigator_data, data]) => {
+                    let result = {
+                        current: CurrentCO2Value.getCurrentValue(),
+                        data: data,
+                        navigator: navigator_data
+                    };
+
+                    res.send(JSON.stringify(result));
                 })
+                .catch(err => {
+                    console.error(err);
+                });
             }
         });
 
