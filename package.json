@@ -27,7 +27,7 @@
   "scripts": {
     "start-dev": "node -r babel-register start.js",
     "build-dev": "set NODE_ENV=development && webpack --watch",
-    "start": "set NODE_ENV=production && node -r babel-register start.js",
+    "start": "set NODE_ENV=production && title CO2 Monitor service && node -r babel-register start.js",
     "build": "set NODE_ENV=production && webpack --progress --profile --colors"
   },
   "repository": {
